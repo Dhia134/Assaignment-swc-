@@ -1,0 +1,100 @@
+   import java.util.Scanner;
+
+public class BookingSystem {
+    private static final int MAX_APPT = 20;
+    private Appointment[] appointments;
+    private int appointmentCount;
+
+    public BookingSystem() {
+        appointments = new Appointment[MAX_APPT];
+        appointmentCount = 0;
+    }
+
+    public void addAppointment(Appointment appointment) {
+        if (appointmentCount < MAX_APPT) {
+            appointments[appointmentCount] = appointment;
+            appointmentCount++;
+            System.out.println("You are ready to meet a dentist ! ");
+        } else {
+            System.out.println("Appointment schedule is full. Please comeback later ;) .");
+        }
+    }
+
+    public void displayAllAppointments() {
+        System.out.println("All Appointments:");
+        for (int i = 0; i < appointmentCount; i++) {
+            System.out.println(appointments[i]);
+        }
+    }
+
+    public void searchAppointmentsByDate(String date) {
+        System.out.println("Appointments on " + date + ":");
+        for (int i = 0; i < appointmentCount; i++) {
+            if (appointments[i].getApptDate().equals(date)) {
+                System.out.println(appointments[i]);
+            }
+        }
+    }
+
+    public void cancelAppointment(String patientName) {
+        for (int i = 0; i < appointmentCount; i++) {
+            if (appointments[i].getPatientName().equalsIgnoreCase(patientName)) {
+                appointments[i] = null; // Cancel the appointment
+                System.out.println("Appointment for " + patientName + " canceled successfully.");
+                break;
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        BookingSystem bookingSystem = new BookingSystem();
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+            System.out.println("\nMenu:");
+            System.out.println("1. Add Appointment");
+            System.out.println("2. Display All Appointments");
+            System.out.println("3. Search Appointments by Date");
+            System.out.println("4. Cancel Appointment");
+            System.out.println("5. Exit");
+            System.out.print("Enter your choice: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter patient name: ");
+                    String patientName = scanner.nextLine();
+                    System.out.print("Enter appointment date (DD-MM-YYYY): ");
+                    String apptDate = scanner.nextLine();
+                    System.out.print("Enter appointment time: ");
+                    String apptTime = scanner.nextLine();
+                    System.out.print("Enter dentist name: ");
+                    String dentistName = scanner.nextLine();
+
+                    Appointment newAppointment = new Appointment(patientName, apptDate, apptTime, dentistName);
+                    bookingSystem.addAppointment(newAppointment);
+                    break;
+                case 2:
+                    bookingSystem.displayAllAppointments();
+                    break;
+                case 3:
+                    System.out.print("Enter date to search (DD-MM-YYYY): ");
+                    String searchDate = scanner.nextLine();
+                    bookingSystem.searchAppointmentsByDate(searchDate);
+                    break;
+                case 4:
+                    System.out.print("Enter patient name to cancel appointment: ");
+                    String cancelPatientName = scanner.nextLine();
+                    bookingSystem.cancelAppointment(cancelPatientName);
+                    break;
+                case 5:
+                    System.out.println("We are done . Have a nice day!");
+                    System.exit(0);
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        }
+    }
+}
+    
