@@ -39,13 +39,13 @@ public class DemoEmployeeSalaryProgram {
                     topEmployee = employeeName;
                 }
 
-                // Update employee with least years of service
+                
                 if (yearsOfService < leastYearsOfService) {
                     leastYearsOfService = yearsOfService;
                     leastServiceEmployee = employeeName;
                 }
 
-                // Write to output file
+            
                 outputFile.println(employeeName + "," + annualSalary);
             }
 
