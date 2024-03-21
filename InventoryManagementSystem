@@ -1,0 +1,142 @@
+import java.io.*;
+import java.util.*;
+
+class Item {
+    private String itemId;
+    private String name;
+    private int quantity;
+    private double unitPrice;
+
+    public Item(String itemId, String name, int quantity, double unitPrice) {
+        this.itemId = itemId;
+        this.name = name;
+        this.quantity = quantity;
+        this.unitPrice = unitPrice;
+    }
+
+    public String getItemId() {
+        return itemId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public double getUnitPrice() {
+        return unitPrice;
+    }
+
+    public double getTotalValue() {
+        return quantity * unitPrice;
+    }
+}
+
+public class InventoryManagementSystem {
+    private static Item[] inventory = new Item[100]; // Adjust the size as needed
+    private static int itemCount = 0;
+
+    public static void main(String[] args) {
+        try {
+            readInventoryData("C:/Users/HP/Downloads/inventoryData.txt");
+            displayInventory();
+            addNewItem();
+            updateQuantity();
+            writeInventoryReport("inventoryReport.txt");
+        } catch (IOException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    private static void readInventoryData(String fileName) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))) {
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                try {
+                    StringTokenizer tokenizer = new StringTokenizer(line, ",");
+                    String itemId = tokenizer.nextToken().trim();
+                    String name = tokenizer.nextToken().trim();
+                    int quantity = Integer.parseInt(tokenizer.nextToken().trim());
+                    double unitPrice = Double.parseDouble(tokenizer.nextToken().trim());
+
+                    Item item = new Item(itemId, name, quantity, unitPrice);
+                    inventory[itemCount++] = item;
+                } catch (NoSuchElementException | NumberFormatException e) {
+                    System.out.println("Error parsing line: " + line);
+                }
+            }
+        }
+    }
+
+    private static void displayInventory() {
+        System.out.println("Current Inventory:");
+        System.out.println("Item ID\tName\tQuantity\tUnit Price\tTotal Value");
+
+        for (int i = 0; i < itemCount; i++) {
+            Item item = inventory[i];
+            System.out.printf("%-8s\t%-20s\t%-10d\t%.2f\t\t%.2f\n", item.getItemId(), item.getName(), item.getQuantity(),
+                    item.getUnitPrice(), item.getTotalValue());
+        }
+    }
+
+    private static void addNewItem() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter item ID: ");
+        String itemId = scanner.nextLine();
+        System.out.print("Enter item name: ");
+        String name = scanner.nextLine();
+        System.out.print("Enter quantity: ");
+        int quantity = scanner.nextInt();
+        System.out.print("Enter unit price: ");
+        double unitPrice = scanner.nextDouble();
+
+        Item item = new Item(itemId, name, quantity, unitPrice);
+        inventory[itemCount++] = item;
+        System.out.println("New item added to inventory.");
+    }
+
+    private static void updateQuantity() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter item ID to update quantity: ");
+        String itemId = scanner.nextLine();
+
+        boolean found = false;
+        for (int i = 0; i < itemCount; i++) {
+            Item item = inventory[i];
+            if (item.getItemId().equals(itemId)) {
+                System.out.print("Enter new quantity: ");
+                int newQuantity = scanner.nextInt();
+                item.setQuantity(newQuantity);
+                System.out.println("Quantity updated for item " + itemId);
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            System.out.println("Item not found in inventory.");
+        }
+    }
+
+    private static void writeInventoryReport(String fileName) throws IOException {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
+            writer.write("Inventory Report:\n");
+            writer.write("Item ID\tName\tQuantity\tUnit Price\tTotal Value\n");
+
+            for (int i = 0; i < itemCount; i++) {
+                Item item = inventory[i];
+                writer.write(String.format("%-8s\t%-20s\t%-10d\t%.2f\t\t%.2f\n", item.getItemId(), item.getName(),
+                        item.getQuantity(), item.getUnitPrice(), item.getTotalValue()));
+            }
+        }
+        System.out.println("Inventory report written to " + fileName);
+    }
+}
